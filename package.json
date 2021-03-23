@@ -1,0 +1,25 @@
+{
+  "name": "three-js",
+  "version": "1.0.0",
+  "private": true,
+  "description": "ThreeJs",
+  "author": "Takashi Saito",
+  "keywords": [
+    "gatsby"
+  ],
+  "scripts": {
+    "develop": "gatsby develop",
+    "start": "gatsby develop",
+    "build": "gatsby build",
+    "serve": "gatsby serve",
+    "clean": "gatsby clean"
+  },
+  "dependencies": {
+    "babel-plugin-styled-components": "^1.12.0",
+    "gatsby": "^3.4.1",
+    "gatsby-plugin-styled-components": "^4.4.0",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "styled-components": "^5.3.0"
+  }
+}
