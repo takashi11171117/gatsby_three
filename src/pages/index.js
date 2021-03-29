@@ -6,6 +6,8 @@ import * as dat from "dat.gui"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
+import { OBJLoader } from "three/examples/jsm/loaders/OBJLoader"
+import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader"
 
 // markup
 const IndexPage = () => {
@@ -30,9 +32,150 @@ const IndexPage = () => {
      */
     const textureLoader = new THREE.TextureLoader()
 
+    const doorColorTexture = textureLoader.load("../../textures/door/color.jpg")
+    const doorAlphaTexture = textureLoader.load("../../textures/door/alpha.jpg")
+    const doorAmbientOcclusionTexture = textureLoader.load(
+      "../../textures/door/ambientOcclusion.jpg"
+    )
+    const doorHeightTexture = textureLoader.load(
+      "../../textures/door/height.jpg"
+    )
+    const doorNormalTexture = textureLoader.load(
+      "../../textures/door/normal.jpg"
+    )
+    const doorMetalnessTexture = textureLoader.load(
+      "../../textures/door/metalness.jpg"
+    )
+    const doorRoughnessTexture = textureLoader.load(
+      "../../textures/door/roughness.jpg"
+    )
+
+    const bricksColorTexture = textureLoader.load(
+      "../../textures/bricks/diff.jpg"
+    )
+    const bricksAoTexture = textureLoader.load("../../textures/bricks/ao.jpg")
+    const bricksNormalTexture = textureLoader.load(
+      "../../textures/bricks/normal.jpg"
+    )
+    const bricksRoughnessTexture = textureLoader.load(
+      "../../textures/bricks/roughness.jpg"
+    )
+
+    const roofColorTexture = textureLoader.load("../../textures/roof/diff.jpg")
+    const roofAoTexture = textureLoader.load("../../textures/roof/ao.jpg")
+    const roofHeightTexture = textureLoader.load(
+      "../../textures/roof/height.jpg"
+    )
+    const roofNormalTexture = textureLoader.load(
+      "../../textures/roof/normal.jpg"
+    )
+    const roofRoughnessTexture = textureLoader.load(
+      "../../textures/roof/roughness.jpg"
+    )
+
+    roofColorTexture.repeat.set(1.5, 1.5)
+    roofAoTexture.repeat.set(1.5, 1.5)
+    roofHeightTexture.repeat.set(1.5, 1.5)
+    roofNormalTexture.repeat.set(1.5, 1.5)
+    roofRoughnessTexture.repeat.set(1.5, 1.5)
+
+    roofColorTexture.wrapS = THREE.RepeatWrapping
+    roofAoTexture.wrapS = THREE.RepeatWrapping
+    roofNormalTexture.wrapS = THREE.RepeatWrapping
+    roofRoughnessTexture.wrapS = THREE.RepeatWrapping
+
+    roofColorTexture.wrapT = THREE.RepeatWrapping
+    roofAoTexture.wrapT = THREE.RepeatWrapping
+    roofNormalTexture.wrapT = THREE.RepeatWrapping
+    roofRoughnessTexture.wrapT = THREE.RepeatWrapping
+
+    const windowColorTexture = textureLoader.load(
+      "../../textures/window/diff.jpg"
+    )
+    const windowAlphaTexture = textureLoader.load(
+      "../../textures/window/alpha.jpg"
+    )
+    const windowAoTexture = textureLoader.load("../../textures/window/ao.jpg")
+    const windowHeightTexture = textureLoader.load(
+      "../../textures/window/height.jpg"
+    )
+    const windowNormalTexture = textureLoader.load(
+      "../../textures/window/normal.jpg"
+    )
+    const windowMetalnessTexture = textureLoader.load(
+      "../../textures/window/metalness.jpg"
+    )
+    const windowRoughnessTexture = textureLoader.load(
+      "../../textures/window/roughness.jpg"
+    )
+
+    const grassColorTexture = textureLoader.load(
+      "../../textures/grass/diff.jpg"
+    )
+    const grassAoTexture = textureLoader.load("../../textures/grass/ao.jpg")
+    const grassNormalTexture = textureLoader.load(
+      "../../textures/grass/normal.jpg"
+    )
+    const grassRoughnessTexture = textureLoader.load(
+      "../../textures/grass/roughness.jpg"
+    )
+
+    grassColorTexture.repeat.set(8, 8)
+    grassAoTexture.repeat.set(8, 8)
+    grassNormalTexture.repeat.set(8, 8)
+    grassRoughnessTexture.repeat.set(8, 8)
+
+    grassColorTexture.wrapS = THREE.RepeatWrapping
+    grassAoTexture.wrapS = THREE.RepeatWrapping
+    grassNormalTexture.wrapS = THREE.RepeatWrapping
+    grassRoughnessTexture.wrapS = THREE.RepeatWrapping
+
+    grassColorTexture.wrapT = THREE.RepeatWrapping
+    grassAoTexture.wrapT = THREE.RepeatWrapping
+    grassNormalTexture.wrapT = THREE.RepeatWrapping
+    grassRoughnessTexture.wrapT = THREE.RepeatWrapping
+
+    const grass2ColorTexture = textureLoader.load(
+      "../../textures/grass2/diff.jpg"
+    )
+    const grass2AoTexture = textureLoader.load("../../textures/grass2/ao.jpg")
+    const grass2NormalTexture = textureLoader.load(
+      "../../textures/grass2/normal.jpg"
+    )
+    const grass2RoughnessTexture = textureLoader.load(
+      "../../textures/grass2/roughness.jpg"
+    )
+
     // init object
     const object = new THREE.Object3D()
     scene.add(object)
+
+    const mtlLoader = new MTLLoader()
+    mtlLoader.load("../../models/Gopher3.mtl", (mtl) => {
+      mtl.preload()
+      const objLoader = new OBJLoader()
+      objLoader.setMaterials(mtl)
+      objLoader.load("../../models/Gopher3.obj", (root) => {
+        const texture = new THREE.TextureLoader().load(
+          "../../textures/gopher_body.png",
+          () => {
+            root.position.z = 3
+            root.rotation.y = Math.PI * 0.25
+            root.castShadow = true
+            let count = 0
+            root.traverse(function (child) {
+              child.castShadow = true
+              if (count === 1 && child instanceof THREE.Mesh) {
+                child.material.map = texture
+                child.material.flatShading = false
+              }
+              count++
+            })
+            object.add(root)
+          }
+        )
+      })
+    })
 
     /**
      * House
@@ -42,7 +185,13 @@ const IndexPage = () => {
 
     const walls1 = new THREE.Mesh(
       new THREE.BoxBufferGeometry(4, 2.5, 4),
-      new THREE.MeshStandardMaterial({ color: "#ac8e82" })
+      new THREE.MeshStandardMaterial({
+        color: "#fff",
+        map: bricksColorTexture,
+        aoMap: bricksAoTexture,
+        normalMap: bricksNormalTexture,
+        roughnessMap: bricksRoughnessTexture,
+      })
     )
     walls1.castShadow = true
     walls1.position.x = 1
@@ -50,7 +199,13 @@ const IndexPage = () => {
 
     const walls2 = new THREE.Mesh(
       new THREE.BoxBufferGeometry(2, 5, 2),
-      new THREE.MeshStandardMaterial({ color: "#ac8e82" })
+      new THREE.MeshStandardMaterial({
+        color: "#fff",
+        map: bricksColorTexture,
+        aoMap: bricksAoTexture,
+        normalMap: bricksNormalTexture,
+        roughnessMap: bricksRoughnessTexture,
+      })
     )
     walls2.castShadow = true
     walls2.position.x = -2
@@ -62,16 +217,40 @@ const IndexPage = () => {
     // Roof
     const roof1 = new THREE.Mesh(
       new THREE.ConeBufferGeometry(2.84, 1, 4),
-      new THREE.MeshStandardMaterial({ color: "#b35f45" })
+      new THREE.MeshStandardMaterial({
+        color: "#ff0000",
+        map: roofColorTexture,
+        aoMap: roofAoTexture,
+        normalMap: roofNormalTexture,
+        roughnessMap: roofRoughnessTexture,
+        roughness: 0.1,
+        displacementMap: roofHeightTexture,
+        displacementScale: 0.1,
+        metalness: 0.1,
+      })
+    )
+    roof1.geometry.setAttribute(
+      "uv2",
+      new THREE.Float32BufferAttribute(roof1.geometry.attributes.uv.array, 2)
     )
     roof1.position.x = 1
-    roof1.position.y = 3
+    roof1.position.y = 2.98
     roof1.rotation.y = Math.PI * 0.25
 
     // Roof
     const roof2 = new THREE.Mesh(
       new THREE.ConeBufferGeometry(1.42, 3, 4),
-      new THREE.MeshStandardMaterial({ color: "#b35f45" })
+      new THREE.MeshStandardMaterial({
+        color: "#ff0000",
+        map: roofColorTexture,
+        aoMap: roofAoTexture,
+        normalMap: roofNormalTexture,
+        roughnessMap: roofRoughnessTexture,
+        roughness: 0.1,
+        displacementMap: roofHeightTexture,
+        displacementScale: 0.1,
+        metalness: 0.1,
+      })
     )
     roof2.position.x = -2
     roof2.position.y = 6.5
@@ -82,8 +261,18 @@ const IndexPage = () => {
 
     // Door
     const door1 = new THREE.Mesh(
-      new THREE.PlaneBufferGeometry(2, 2),
-      new THREE.MeshStandardMaterial({ color: "#aa7b7b" })
+      new THREE.PlaneBufferGeometry(2, 2, 100, 100),
+      new THREE.MeshStandardMaterial({
+        map: doorColorTexture,
+        transparent: true,
+        alphaMap: doorAlphaTexture,
+        aoMap: doorAmbientOcclusionTexture,
+        displacementMap: doorHeightTexture,
+        displacementScale: 0.03,
+        normalMap: doorNormalTexture,
+        metalnessMap: doorMetalnessTexture,
+        roughnessMap: doorRoughnessTexture,
+      })
     )
     door1.position.x = 1
     door1.position.y = 1
@@ -91,7 +280,17 @@ const IndexPage = () => {
 
     const door2 = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(2, 2),
-      new THREE.MeshStandardMaterial({ color: "#aa7b7b" })
+      new THREE.MeshStandardMaterial({
+        map: doorColorTexture,
+        transparent: true,
+        alphaMap: doorAlphaTexture,
+        aoMap: doorAmbientOcclusionTexture,
+        displacementMap: doorHeightTexture,
+        displacementScale: 0.1,
+        normalMap: doorNormalTexture,
+        metalnessMap: doorMetalnessTexture,
+        roughnessMap: doorRoughnessTexture,
+      })
     )
     door2.position.x = -3 - 0.01
     door2.position.y = 1
@@ -103,45 +302,147 @@ const IndexPage = () => {
     // Window
     const window1 = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(1, 1),
-      new THREE.MeshStandardMaterial({ color: "#aa7b7b" })
+      new THREE.MeshStandardMaterial({
+        color: "#724e13",
+        map: windowColorTexture,
+        alphaMap: windowAlphaTexture,
+        transparent: true,
+        aoMap: windowAoTexture,
+        displacementMap: windowHeightTexture,
+        displacementScale: 2,
+        normalMap: windowNormalTexture,
+        metalnessMap: windowMetalnessTexture,
+        roughnessMap: windowRoughnessTexture,
+      })
     )
-    window1.position.x = -3 - 0.01
+    window1.position.x = -3 - 0.02
     window1.position.y = 4
     window1.position.z = -1
     window1.rotation.y = -Math.PI * 0.5
 
+    const windowBack1 = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(0.9, 0.7),
+      new THREE.MeshStandardMaterial({
+        color: "#000",
+      })
+    )
+    windowBack1.position.x = -3 - 0.01
+    windowBack1.position.y = 4
+    windowBack1.position.z = -1
+    windowBack1.rotation.y = -Math.PI * 0.5
+
     const window2 = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(1, 1),
-      new THREE.MeshStandardMaterial({ color: "#aa7b7b" })
+      new THREE.MeshStandardMaterial({
+        color: "#724e13",
+        map: windowColorTexture,
+        alphaMap: windowAlphaTexture,
+        transparent: true,
+        aoMap: windowAoTexture,
+        displacementMap: windowHeightTexture,
+        displacementScale: 2,
+        normalMap: windowNormalTexture,
+        metalnessMap: windowMetalnessTexture,
+        roughnessMap: windowRoughnessTexture,
+      })
     )
-    window2.position.x = -1 + 0.01
+    window2.position.x = -1 + 0.02
     window2.position.y = 4
     window2.position.z = -1
     window2.rotation.y = Math.PI * 0.5
 
+    const windowBack2 = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(0.9, 0.7),
+      new THREE.MeshStandardMaterial({
+        color: "#000",
+      })
+    )
+    windowBack2.position.x = -1 + 0.01
+    windowBack2.position.y = 4
+    windowBack2.position.z = -1
+    windowBack2.rotation.y = Math.PI * 0.5
+
     const window3 = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(2, 1),
-      new THREE.MeshStandardMaterial({ color: "#aa7b7b" })
+      new THREE.MeshStandardMaterial({
+        color: "#724e13",
+        map: windowColorTexture,
+        alphaMap: windowAlphaTexture,
+        transparent: true,
+        aoMap: windowAoTexture,
+        displacementMap: windowHeightTexture,
+        displacementScale: 2,
+        normalMap: windowNormalTexture,
+        metalnessMap: windowMetalnessTexture,
+        roughnessMap: windowRoughnessTexture,
+      })
     )
-    window3.position.x = 3 + 0.01
+    window3.position.x = 3 + 0.02
     window3.position.y = 1.25
     window3.position.z = 0
     window3.rotation.y = Math.PI * 0.5
 
+    const windowBack3 = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(1.8, 0.7),
+      new THREE.MeshStandardMaterial({
+        color: "#000",
+      })
+    )
+    windowBack3.position.x = 3 + 0.01
+    windowBack3.position.y = 1.25
+    windowBack3.position.z = 0
+    windowBack3.rotation.y = Math.PI * 0.5
+
     const window4 = new THREE.Mesh(
       new THREE.PlaneBufferGeometry(2, 1),
-      new THREE.MeshStandardMaterial({ color: "#aa7b7b" })
+      new THREE.MeshStandardMaterial({
+        color: "#724e13",
+        map: windowColorTexture,
+        alphaMap: windowAlphaTexture,
+        transparent: true,
+        aoMap: windowAoTexture,
+        displacementMap: windowHeightTexture,
+        displacementScale: 2,
+        normalMap: windowNormalTexture,
+        metalnessMap: windowMetalnessTexture,
+        roughnessMap: windowRoughnessTexture,
+      })
     )
     window4.position.x = 1 + 0.01
     window4.position.y = 1.25
-    window4.position.z = -2 - 0.01
+    window4.position.z = -2 - 0.02
     window4.rotation.y = Math.PI * 1
 
-    house.add(window1, window2, window3, window4)
+    const windowBack4 = new THREE.Mesh(
+      new THREE.PlaneBufferGeometry(1.8, 0.7),
+      new THREE.MeshStandardMaterial({
+        color: "#000",
+      })
+    )
+    windowBack4.position.x = 1 + 0.01
+    windowBack4.position.y = 1.25
+    windowBack4.position.z = -2 - 0.01
+    windowBack4.rotation.y = Math.PI * 1
+
+    house.add(
+      window1,
+      windowBack1,
+      window2,
+      windowBack2,
+      window3,
+      windowBack3,
+      window4,
+      windowBack4
+    )
 
     // Bushes
     const bushGeometry = new THREE.SphereBufferGeometry(1, 16, 16)
-    const bushMaterial = new THREE.MeshStandardMaterial({ color: "#89c854" })
+    const bushMaterial = new THREE.MeshStandardMaterial({
+      map: grass2ColorTexture,
+      aoMap: grass2AoTexture,
+      normalMap: grass2NormalTexture,
+      roughnessMap: grass2RoughnessTexture,
+    })
 
     const bush1 = new THREE.Mesh(bushGeometry, bushMaterial)
     bush1.castShadow = true
@@ -175,7 +476,13 @@ const IndexPage = () => {
     scene.add(graves)
 
     const graveGeometry = new THREE.BoxGeometry(0.6, 0.8, 0.1)
-    const graveMaterial = new THREE.MeshStandardMaterial({ color: "#727272" })
+    const graveMaterial = new THREE.MeshStandardMaterial({
+      color: "#666666",
+      map: bricksColorTexture,
+      aoMap: bricksAoTexture,
+      normalMap: bricksNormalTexture,
+      roughnessMap: bricksRoughnessTexture,
+    })
 
     for (let i = 0; i < 50; i++) {
       const angle = Math.random() * Math.PI * 2 // Random angle
@@ -201,7 +508,12 @@ const IndexPage = () => {
     // Floor
     const floor = new THREE.Mesh(
       new THREE.PlaneGeometry(20, 20),
-      new THREE.MeshStandardMaterial({ color: "#a9c388" })
+      new THREE.MeshStandardMaterial({
+        map: grassColorTexture,
+        aoMap: grassAoTexture,
+        normalMap: grassNormalTexture,
+        roughnessMap: grassRoughnessTexture,
+      })
     )
     floor.receiveShadow = true
     floor.rotation.x = -Math.PI * 0.5
@@ -212,7 +524,7 @@ const IndexPage = () => {
      * Lights
      */
     // Ambient light
-    const ambientLight = new THREE.AmbientLight("#b9d5ff", 0.3)
+    const ambientLight = new THREE.AmbientLight("#b9d5ff", 0.8)
     gui.add(ambientLight, "intensity").min(0).max(1).step(0.001)
     scene.add(ambientLight)
 
