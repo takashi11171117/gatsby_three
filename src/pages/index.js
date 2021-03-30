@@ -2,7 +2,6 @@ import React, { useEffect } from "react"
 import styled from "styled-components"
 import Layout from "../components/layout"
 import * as THREE from "three"
-import * as dat from "dat.gui"
 import { EffectComposer } from "three/examples/jsm/postprocessing/EffectComposer"
 import { RenderPass } from "three/examples/jsm/postprocessing/RenderPass"
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls"
@@ -12,7 +11,7 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader"
 // markup
 const IndexPage = () => {
   const clock = new THREE.Clock()
-  let controls, ghost1, ghost2, ghost3
+  let controls, ghost1, ghost2, ghost3, gui
 
   const onCanvasLoaded = (canvas) => {
     if (!canvas) {
@@ -21,8 +20,6 @@ const IndexPage = () => {
 
     const width = window.innerWidth
     const height = window.innerHeight
-    // Debug
-    const gui = new dat.GUI()
 
     // Scene
     const scene = new THREE.Scene()
@@ -623,6 +620,9 @@ const IndexPage = () => {
   }
 
   useEffect(() => {
+    import("dat.gui").then((dat) => {
+      gui = new dat.GUI()
+    })
     return () => {
       window.removeEventListener("resize", () => handleResize)
     }
