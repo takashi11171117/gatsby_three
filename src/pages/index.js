@@ -11,9 +11,9 @@ import { MTLLoader } from "three/examples/jsm/loaders/MTLLoader"
 // markup
 const IndexPage = () => {
   const clock = new THREE.Clock()
-  let controls, ghost1, ghost2, ghost3, gui
+  let controls, ghost1, ghost2, ghost3
 
-  const onCanvasLoaded = (canvas) => {
+  const onCanvasLoaded = async (canvas) => {
     if (!canvas) {
       return
     }
@@ -23,6 +23,9 @@ const IndexPage = () => {
 
     // Scene
     const scene = new THREE.Scene()
+
+    const dat = await import("dat.gui")
+    const gui = new dat.GUI()
 
     /**
      * Textures
@@ -94,7 +97,7 @@ const IndexPage = () => {
     )
     const windowAoTexture = textureLoader.load("../../textures/window/ao.jpg")
     const windowHeightTexture = textureLoader.load(
-      "../../textures/window/height.jpg"
+      "../../textures/window/height.png"
     )
     const windowNormalTexture = textureLoader.load(
       "../../textures/window/normal.jpg"
@@ -620,9 +623,6 @@ const IndexPage = () => {
   }
 
   useEffect(() => {
-    import("dat.gui").then((dat) => {
-      gui = new dat.GUI()
-    })
     return () => {
       window.removeEventListener("resize", () => handleResize)
     }
